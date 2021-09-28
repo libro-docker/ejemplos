@@ -1,0 +1,19 @@
+FROM golang:1.15 as build
+
+WORKDIR /go/src/app
+COPY app.go .
+
+RUN go get -d -v ./... && \
+    go install -v ./...
+
+FROM ubuntu as compressor
+RUN apt update -y && apt install -y upx
+COPY --from=build /go/bin/app /
+RUN upx -1 /app
+
+FROM gcr.io/distroless/base
+
+COPY --from=compressor /app /
+EXPOSE 8080
+
+ENTRYPOINT ["/app"]

@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    stages {
+        stage('Hello from docker') {
+            agent {
+                docker {
+                    image 'python'
+                }
+            }
+            steps {
+                sh 'python hello.py'
+            }
+        }
+    }
+}
+
